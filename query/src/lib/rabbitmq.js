@@ -11,12 +11,17 @@ export async function connect() {
 
 
 export async function subscribeEvents(exchange, routingKey, callback) {
-  if (!channel) await connect();
+  if (!channel) {
+    throw new Error("RabbitMQ is not connected.");
+  }
   // 1. Khai báo exchange
   await channel.assertExchange(exchange, "topic", { durable: true });
 
   // 2. Tạo queue riêng
-  const { queue } = await channel.assertQueue("", { exclusive: true });
+  const queueName = `query_queue_${routingKey}`;
+  const { queue } = await channel.assertQueue(queueName, {
+    durable: true,
+  });
 
   // 3. Bind queue với exchange + routing key
   await channel.bindQueue(queue, exchange, routingKey);
