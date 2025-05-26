@@ -1,4 +1,4 @@
-import { Client } from 'pg';
+import { Client } from "pg";
 
 // Kết nối trực tiếp tới database đích (đã tồn tại)
 const connectionString = process.env.DATABASE_URL;
@@ -19,7 +19,7 @@ async function createTable() {
     await client.query(createTableSQL);
     console.log('Table "products" created (if not existed).');
   } catch (err) {
-    console.error('Error creating table:', err);
+    console.error("Error creating table:", err);
   } finally {
     await client.end();
   }
