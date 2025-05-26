@@ -4,6 +4,17 @@ import { Pool } from "pg";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
+//Get product by ID
+const getProductById = async (id) => {
+  const result = await pool.query("SELECT * FROM products WHERE id = $1", [id]);
+  if (result.rows.length === 0) {
+    throw new NotFoundError(
+      `Product with ID ${id} does not exist or has been deleted.`
+    );
+  }
+  return result.rows[0];
+};
+
 //Get all products
 const getAllProducts = async () => {
   const result = await pool.query("SELECT * FROM products");
@@ -45,4 +56,5 @@ export const handlers = {
   updateProduct,
   deleteProduct,
   getAllProducts,
+  getProductById,
 };
