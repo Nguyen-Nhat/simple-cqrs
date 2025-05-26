@@ -5,6 +5,15 @@ import { Pool } from "pg";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
+//Get product by ID
+const getProductById = async (id) => {
+  const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
+  if (result.rows.length === 0) {
+    throw new NotFoundError(`Product with ID ${id} does not exist or has been deleted.`);
+  }
+  return result.rows[0];
+};
+
 //Get all products
 const getAllProducts = async () => {
   const result = await pool.query('SELECT * FROM products');
@@ -12,8 +21,7 @@ const getAllProducts = async () => {
 };
 
 // Create
-const createProduct = async (name, price) => {
-  const id = uuidv4();
+const createProduct = async (id, name, price) => {
   await pool.query('INSERT INTO products (id, name, price) VALUES ($1, $2, $3)', [id, name, price]);
 };
 
@@ -35,5 +43,6 @@ export const handlers = {
   createProduct,
   updateProduct,
   deleteProduct,
-  getAllProducts
+  getAllProducts,
+  getProductById
 };
